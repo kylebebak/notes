@@ -394,8 +394,9 @@ if [ -t 0 ]; then
     argument=""
 
     if [[ "$2" == *"${glob}"* ]]; then
-      glob=`echo $2 | tr ${glob} '*'`
-      argument=`find . -name "${glob}" ! -type d 2>/dev/null`
+      glob=`echo $2 | sed "s/${glob}/.*/g"`
+
+      argument=`find . -type f ! -path "*/\.*" 2>/dev/null | grep "${glob}"`
 
       if [ -z "$argument" ]; then
         echo "globbing error for pattern ${bold}"$glob"${normal}: no such notes exist"

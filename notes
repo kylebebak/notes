@@ -1,0 +1,452 @@
+#!/bin/bash
+
+
+# dependencies
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+
+# in shell startup file, this makes sure proper completions function (bash or zsh) is initialized
+# which notes >/dev/null && . "$( notes -i )"
+
+# make notes visible in $PATH
+# ln -s /Users/kylebebak/Dropbox/Programming/__bin/notes/notes ~/bin/notes
+
+
+
+# globals
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+ext=".md"
+bold=`tput bold`
+normal=`tput sgr0`
+# @ is not expanded by bash or zsh
+glob="@"
+
+# these parameters should not be modified
+notes_dir="_notes"
+completions_dir="_completions"
+init_script="init.sh"
+
+
+
+
+# functions
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+function checknote {
+  if [ ! -f "$1${ext}" ]; then
+    echo "the note ${bold}$1${normal} does not exist"
+    exit 1
+  fi
+}
+
+function checkdir {
+  if [ ! -d "$1" ]; then
+    echo "the directory ${bold}$1${normal} does not exist"
+    exit 1
+  fi
+}
+
+# hash is faster than which
+function checkexec {
+  if hash $1 2>/dev/null; then
+    :
+  else
+    echo "the executable ${bold}$1${normal} does not exist"
+    exit 1
+  fi
+}
+
+function checkname {
+  if echo $1 | grep -E "[[:space:]]" >/dev/null; then
+    echo "neither note nor directory names may contain whitespace characters"
+    exit 1
+  fi
+}
+
+
+function previewnotes {
+
+  # for inserting horizontal tab character into sed
+  TRAILINGSPACES=48
+  INDENT="        "
+  MAXCHARS=24
+  DESCRIPTIONCHARS=50
+
+  # exlude dot files, and exclude parent directory
+  find ${1} ! -path ${1} ! -path "*/${1}*" 2>/dev/null | while read x; do
+    # remove leading ./ with cut, replace remaining path segments with indent spaces, then remove all non-space chars
+    indent=`echo $x | cut -c 3- | sed -E "s:[^/]+/:$INDENT:g" | sed -E "s/[^ ]//g"`
+
+    # get basename of note without extension, and trim excessively long names
+    name=`basename "$x" | cut -d. -f1`
+    name=${name:0:$MAXCHARS}
+
+    numspaces=$[$TRAILINGSPACES - ${#name}]
+    spaces=`head -c $numspaces < /dev/zero | tr '\0' ' '`
+
+    if [ -f $x ]; then
+      desc="`head -c $DESCRIPTIONCHARS $x | tr '\n' ' ' 2>/dev/null`..."
+      echo -e "${indent}${bold}${name}${normal}${spaces}${desc}"
+
+    elif [ -d $x ]; then
+      desc="/"
+      echo -e "${indent}${name}${spaces}${desc}"
+
+    fi
+  done
+
+}
+
+
+
+
+
+# directories
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+
+# start by getting script path even if it was executed via symlink. will work in bash, sh, ksh (not bsd)
+fullpath=`readlink -f $0 2>/dev/null`
+
+# will work in tcsh, csh (and bsd)
+if [ $? -ne 0 ]; then
+  fullpath=`readlink $0 2>/dev/null`
+
+  # will work if script was not executed via symlink
+  if [ $? -ne 0 ]; then
+    fullpath=`echo $0`
+  fi
+fi
+
+name=$(basename ${fullpath})
+root_dir=$(dirname ${fullpath})
+
+dir="${root_dir}/${notes_dir}"
+# cd into physical notes directory
+cd $dir; dir=`pwd -P`; cd $dir
+
+
+
+# help
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+unset usage
+usage() {
+  cat << EOF
+
+${bold}NAME${normal}
+    ${bold}${name}${normal}
+
+${bold}SYNOPSIS${normal}
+    ${bold}${name}${normal} [${bold}-hclLmnNoOprR${normal}] note ...
+
+${bold}DESCRIPTION${normal}
+    [ ${bold}-h${normal} ]                                  get help (display this page)
+    [ ${bold}-c${normal} TGT_NOTE NOTE_A NOTE_B ... ]       combine notes: append text in notes a,b,... to target note. can be used to copy a note**
+    [ ${bold}-f${normal} PATTERN ]                          find notes: search for all notes matching pattern
+    [ ${bold}-l${normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
+    [ ${bold}-L${normal} SOURCE_NOTE TARGET_NOTE ]          create a hard link between source note and target note. source note must exist in notes directory
+    [ ${bold}-m${normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
+    [ ${bold}-n${normal} NEW_NOTE ]                         create a note
+    [ ${bold}-N${normal} NEW_DIR ]                          create a directory
+    [ ${bold}-o${normal} NOTE ]                             open note
+    [ ${bold}-O${normal} ]                                  open notes directory
+    [ ${bold}-p${normal} ]                                  display path to notes directory
+    [ ${bold}-r${normal} NOTE ]                             remove (delete) a note
+    [ ${bold}-R${normal} DIR ]                              remove (delete) a directory
+
+    **
+      ${name} -c copy original
+
+
+    All of these options are mutually exclusive, i.e. at most one option should be passed to ${bold}${name}${normal}.
+
+
+    If ${bold}${name}${normal} is invoked without any options, the following modes of execution exist:
+
+      - zero arguments        :                             list all notes
+      - one argument          <note_or_directory>:          display this note, or list all notes under this directory
+      - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${bold}*${normal} with ${bold}${glob}${normal}
+      - two or more arguments <program> <note(s)>:          pass note(s) as arguments to program
+
+${bold}EXAMPLES${normal}
+      - notes 'grep password' ${glob}
+      - notes open github
+
+${bold}EXTENSIONS${normal}
+      All notes have a default extension of ${bold}${ext}${normal}, which is assigned to the variable ${bold}ext${normal} in the source code of this program. Edit this variable to change or remove the extension. The extension should never be passed to ${bold}notes${normal} in any of its modes of execution.
+
+EOF
+}
+
+
+
+
+
+# parse options and arguments
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+while getopts ":hc:Cf:il:L:m:n:N:o:Opr:R:" opt; do
+  case $opt in
+
+    # custom completions function, invoked by _completions/notes.completions.zsh or _completions/notes.completions.bash
+    # ––––––––––––––––––––––––––––––
+    C)
+      # ignore directories files, remove leading ./ with sed, ignore dotfiles with path param, remove extension
+      for note in `find . -type f ! -path "*/\.*" 2>/dev/null | sed 's/^\.\///'`; do echo "${note%.*}"; done
+      exit 0
+    ;;
+
+    # path init script for loading custom tab completions
+    # ––––––––––––––––––––––––––––––
+    i)
+      echo ${root_dir}/${completions_dir}/${init_script}
+      exit 0
+    ;;
+
+    # invoke usage function to print help to the screen
+    # ––––––––––––––––––––––––––––––
+    h)
+      usage
+      exit 0
+    ;;
+
+    # open note
+    # ––––––––––––––––––––––––––––––
+    o)
+      checknote "$OPTARG"
+      open "$OPTARG${ext}"
+      exit 0
+    ;;
+
+    # open notes directory
+    # ––––––––––––––––––––––––––––––
+    O)
+      open .
+      exit 0
+    ;;
+
+    # print path to notes directory
+    # ––––––––––––––––––––––––––––––
+    p)
+      echo $dir
+      exit 0
+    ;;
+
+    # create a new note
+    # ––––––––––––––––––––––––––––––
+    n)
+      checkname "$OPTARG"
+      touch "$OPTARG${ext}"
+      exit 0
+    ;;
+
+    # create a new directory
+    # ––––––––––––––––––––––––––––––
+    N)
+      checkname "$OPTARG"
+      mkdir "$OPTARG"
+      exit 0
+    ;;
+
+    # remove (delete) a note
+    # ––––––––––––––––––––––––––––––
+    r)
+      checknote $OPTARG
+      rm "$OPTARG${ext}"
+      exit 0
+    ;;
+
+    # remove (delete) a directory
+    # ––––––––––––––––––––––––––––––
+    R)
+      checkdir $OPTARG
+      rm -dr "$OPTARG"
+      exit 0
+    ;;
+
+    # move a note (change its name). overwriting an existing note is not allowed
+    # ––––––––––––––––––––––––––––––
+    m)
+      checknote $OPTARG
+      checkname "${@:$OPTIND:1}"
+      if [ -f ${@:$OPTIND:1}${ext} ]; then
+        echo "the note ${bold}${@:$OPTIND:1}${normal} already exists, and can not be overwritten with the -m option"
+        exit 1
+      fi
+
+      mv $OPTARG${ext} ${@:$OPTIND:1}${ext}
+      exit 0
+    ;;
+
+    # show paths of all notes under home directory with same inode as this note (notes connected by hard links)
+    # ––––––––––––––––––––––––––––––
+    l)
+      checknote $OPTARG
+      find ~ -inum `ls -i ${OPTARG}${ext} | awk '{print $1}'` ! -path "${dir}/*" -xdev 2>/dev/null
+      exit 0
+    ;;
+
+    # create a hard link between source note and target note. source note must exist in notes directory
+    # ––––––––––––––––––––––––––––––
+    L)
+      checknote $OPTARG
+      shift; shift
+      ln "$OPTARG${ext}" $1
+      exit 0
+    ;;
+
+    # combine notes (does not delete notes that were combined with target note, creates a new target note if target note did not exist)
+    # ––––––––––––––––––––––––––––––
+    c)
+      checkname "$OPTARG"
+      tgt=$OPTARG${ext}
+      # shift pass -c and $OPTARG
+      shift; shift
+
+      tgtexists=""
+      if [ -f $tgt ]; then
+        tgtexists=1
+      fi
+
+
+      until [ -z "$1" ]
+      do
+        if [ -f $1${ext} ]; then
+
+          if [ -z $tgtexists ]; then
+            tgtexists=1
+          else
+            printf "\n______________________________\n" >> $tgt
+          fi
+
+          cat $1${ext} >> $tgt
+        else
+          echo "the note ${bold}$1${normal} does not exist"
+        fi
+        shift
+      done
+
+      exit 0
+    ;;
+
+    f)
+      egrep -ri $OPTARG .
+      exit 0
+    ;;
+
+
+    # error messages
+    # ––––––––––––––––––––––––––––––
+    \?)
+      echo "invalid option: -$OPTARG"
+      usage
+      exit 1
+    ;;
+    :)
+      echo "error: option -$OPTARG requires an argument"
+      usage
+      exit 1
+    ;;
+  esac
+done
+
+
+
+
+
+
+
+# if standard input is empty
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+if [ -t 0 ]; then
+
+  # list all notes (if no args are passed). this function uses find, which allows it to recursively list notes in all subdirectories of notes directory
+  # ––––––––––––––––––––––––––––––
+  if [ -z "$1" ]; then
+    previewnotes .
+    exit 0
+  fi
+
+
+
+  # display contents of a note, or list all notes within a directory (if one arg is passed)
+  # ––––––––––––––––––––––––––––––
+  if [ -z "$2" ]; then
+
+    if [ ! -f "$1${ext}" ]; then
+      if [ ! -d "$1" ]; then
+        echo "neither the note nor directory ${bold}$1${normal} exists"
+        exit 1
+      fi
+      previewnotes $1
+      exit 0
+    fi
+
+    less $1${ext}
+    exit 0
+  fi
+
+
+  # pass note as argument to another program (if two args are passed)
+  # ––––––––––––––––––––––––––––––
+
+  # make sure first argument is an executable
+  checkexec `echo $1 | awk '{ print $1; }'`
+
+  if [ -z "$3" ]; then
+
+    argument=""
+
+    if [[ "$2" == *"${glob}"* ]]; then
+      glob=`echo $2 | tr ${glob} '*'`
+      argument=`find . -name "${glob}" ! -type d 2>/dev/null`
+
+      if [ -z "$argument" ]; then
+        echo "globbing error for pattern ${bold}"$glob"${normal}: no such notes exist"
+        exit
+      fi
+
+      $1 ${argument} 2>/dev/null
+
+    else
+      checknote $2
+      $1 $2${ext}
+    fi
+
+    # exit with status code from last command
+    exit $?
+  fi
+
+
+  # pass notes as arguments to another program (if more than two args are passed)
+  # ––––––––––––––––––––––––––––––
+  program=$1
+  shift
+
+  echo $@
+  noteargs=""
+  for note in $@; do
+    checknote $note
+    noteargs="${noteargs}`echo $note`${ext} ";
+  done
+  $program ${noteargs}
+  exit 0
+
+
+
+
+# if standard input is not empty
+# ––––––––––––––––––––––––––––––––––––––––––––––––––
+else
+
+  checkname "$1"
+  if [ -z "$1" ]; then
+    echo "to read from stdin and append to a note, a note must be specified"
+    exit 1
+  fi
+
+  # when reading from stdin a new note is created if the note specified does not exist. printf preserves whitespace, unlike echo
+  echo "" >> $1${ext}
+  while IFS='' read -r line; do
+    # echo $line >> $1${ext}
+    printf "%s\n" "$line" >> $1${ext}
+  done
+fi
+exit 0
+

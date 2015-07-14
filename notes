@@ -185,7 +185,7 @@ EOF
 while getopts ":hc:Cf:il:L:m:n:N:o:Opr:R:" opt; do
   case $opt in
 
-    # custom completions function, invoked by _completions/notes.completions.zsh or _completions/notes.completions.bash
+    # custom completions function for returning a list of all notes to ber parsed by completions functions
     # ––––––––––––––––––––––––––––––
     C)
       # ignore directories files, remove leading ./ with sed, ignore dotfiles with path param, remove extension

@@ -162,8 +162,9 @@ ${bold}DESCRIPTION${normal}
 
       - zero arguments        :                             list all notes
       - one argument          <note_or_directory>:          display this note, or list all notes under this directory
+      - two arguments         <program> <note>:             pass note as argument to program
       - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${bold}*${normal} with ${bold}${glob}${normal}
-      - two or more arguments <program> <note(s)>:          pass note(s) as arguments to program
+      - > two arguments       <program> <notes>:            pass notes as arguments to program
 
 ${bold}EXAMPLES${normal}
       - notes 'grep password' ${glob}

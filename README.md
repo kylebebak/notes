@@ -1,7 +1,7 @@
 notes
 =====
 
-**notes** is a command line tool that provides lightning-quick access, editing capability, and search functionality to persistent notes on your system. the default extension for notes is `.md`. this extension is totally absent from notes' syntax. **notes** supports *tab completion* and *globbing* from any directory: the `*` wildcard is replaced by `@`
+**notes** is a command line tool that provides lightning-quick access, editing capability, and search functionality to persistent notes on your system. the default extension for notes is `.md`. this extension is totally absent from notes' syntax. **notes** supports **_tab completion_** and **_wildcard matching_** from any directory: the `*` wildcard is replaced by `@`
 
 
 ## features
@@ -28,12 +28,37 @@ in the `_completions` subdirectory is a script called `init.sh`. when run, this 
 
 `which notes >/dev/null && . "$( notes -i )"`
 
-if you execute **notes** via symlink, make sure that the name of the target file is also notes. otherwise, tab completions won't work
+if you execute **notes** via symlink, *make sure that the name of the target file (the symlink) is also notes*. otherwise, tab completions won't work
 
-
-
-## extra
+#### extra
 
 * the default extension for all notes is `.md`. markdown's formatting perks allow notes to be dynamic without sacrificing portability. the extension is set in the `ext` variable in the `notes` executable, and can be modified there
 
 * clone notes into your dropbox to sync your notes and access them from all your devices
+
+
+## usage
+
+#### syntax
+```
+zero arguments          :                           list all notes
+one argument            <note_or_directory>:        display this note, or list all notes under this directory
+two arguments           <program> <note>:           pass note as argument to program
+two arguments           <program> <glob_pattern>:   pass all matched notes as arguments to program, replace * with @
+> two arguments         <program> <notes>:          pass notes as arguments to program
+```
+
+#### options
+```
+[ -n NEW_NOTE ]                                     create a note
+[ -N NEW_DIR ]                                      create a directory
+[ -r NOTE ]                                         remove (delete) a note
+[ -R DIR ]                                          remove (delete) a directory
+[ -m NOTE NEW_NOTE ]                                move a note (change its name)
+[ -f PATTERN ]                                      find notes: search for all notes matching pattern
+[ -o NOTE ]                                         open note
+```
+
+execute `notes -h` to get help and see more options
+
+

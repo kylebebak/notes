@@ -139,7 +139,8 @@ ${bold}SYNOPSIS${normal}
 ${bold}DESCRIPTION${normal}
     [ ${bold}-h${normal} ]                                  get help (display this page)
     [ ${bold}-c${normal} TGT_NOTE NOTE_A NOTE_B ... ]       combine notes: append text in notes a,b,... to target note. can be used to copy a note**
-    [ ${bold}-f${normal} PATTERN ]                          find notes: search for all notes matching pattern
+    [ ${bold}-f${normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
+    [ ${bold}-F${normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
     [ ${bold}-l${normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
     [ ${bold}-L${normal} SOURCE_NOTE TARGET_NOTE ]          create a hard link between source note and target note. source note must exist in notes directory
     [ ${bold}-m${normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
@@ -182,7 +183,7 @@ EOF
 
 # parse options and arguments
 # ––––––––––––––––––––––––––––––––––––––––––––––––––
-while getopts ":hc:Cf:il:L:m:n:N:o:Opr:R:" opt; do
+while getopts ":hc:Cf:F:il:L:m:n:N:o:Opr:R:" opt; do
   case $opt in
 
     # custom completions function for returning a list of all notes to ber parsed by completions functions
@@ -328,6 +329,11 @@ while getopts ":hc:Cf:il:L:m:n:N:o:Opr:R:" opt; do
 
     f)
       egrep -ri $OPTARG .
+      exit 0
+    ;;
+
+    F)
+      egrep -ril $OPTARG .
       exit 0
     ;;
 

@@ -62,3 +62,5 @@ two arguments           <program> <glob_pattern>:   pass all matched notes as ar
 execute `notes -h` to get help and see more options
 
 
+## license
+This code is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).

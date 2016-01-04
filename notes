@@ -134,7 +134,7 @@ ${bold}NAME${normal}
     ${bold}${name}${normal}
 
 ${bold}SYNOPSIS${normal}
-    ${bold}${name}${normal} [${bold}-hclLmnNoOprR${normal}] note ...
+    ${bold}${name}${normal} [${bold}-hclLmnNOpPrR${normal}] note ...
 
 ${bold}DESCRIPTION${normal}
     [ ${bold}-h${normal} ]                                  get help (display this page)
@@ -146,9 +146,9 @@ ${bold}DESCRIPTION${normal}
     [ ${bold}-m${normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
     [ ${bold}-n${normal} NEW_NOTE ]                         create a note
     [ ${bold}-N${normal} NEW_DIR ]                          create a directory
-    [ ${bold}-o${normal} NOTE ]                             open note
     [ ${bold}-O${normal} ]                                  open notes directory
-    [ ${bold}-p${normal} ]                                  display path to notes directory
+    [ ${bold}-p${normal} ]                                  print contents of note
+    [ ${bold}-P${normal} ]                                  display path to notes directory
     [ ${bold}-r${normal} NOTE ]                             remove (delete) a note
     [ ${bold}-R${normal} DIR ]                              remove (delete) a directory
 
@@ -162,10 +162,10 @@ ${bold}DESCRIPTION${normal}
     If ${bold}${name}${normal} is invoked without any options, the following modes of execution exist:
 
       - zero arguments        :                             list all notes
-      - one argument          <note_or_directory>:          display this note, or list all notes under this directory
+      - one argument          <note_or_directory>:          open this note, or list all notes under this directory
       - two arguments         <program> <note>:             pass note as argument to program
       - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${bold}*${normal} with ${bold}${glob}${normal}
-      - > two arguments       <program> <notes>:            pass notes as arguments to program
+      - g.t. two arguments    <program> <notes>:            pass notes as arguments to program
 
 ${bold}EXAMPLES${normal}
       - notes 'grep password' ${glob}
@@ -183,7 +183,7 @@ EOF
 
 # parse options and arguments
 # ––––––––––––––––––––––––––––––––––––––––––––––––––
-while getopts ":hc:Cf:F:il:L:m:n:N:o:Opr:R:" opt; do
+while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
   case $opt in
 
     # custom completions function for returning a list of all notes to ber parsed by completions functions
@@ -208,14 +208,6 @@ while getopts ":hc:Cf:F:il:L:m:n:N:o:Opr:R:" opt; do
       exit 0
     ;;
 
-    # open note
-    # ––––––––––––––––––––––––––––––
-    o)
-      checknote "$OPTARG"
-      open "$OPTARG${ext}"
-      exit 0
-    ;;
-
     # open notes directory
     # ––––––––––––––––––––––––––––––
     O)
@@ -223,9 +215,17 @@ while getopts ":hc:Cf:F:il:L:m:n:N:o:Opr:R:" opt; do
       exit 0
     ;;
 
-    # print path to notes directory
+    # print contents of note
     # ––––––––––––––––––––––––––––––
     p)
+      checknote "$OPTARG"
+      less "$OPTARG${ext}"
+      exit 0
+    ;;
+
+    # print path to notes directory
+    # ––––––––––––––––––––––––––––––
+    P)
       echo $dir
       exit 0
     ;;
@@ -372,7 +372,7 @@ if [ -t 0 ]; then
 
 
 
-  # display contents of a note, or list all notes within a directory (if one arg is passed)
+  # open note, or list all notes within a directory (if one arg is passed)
   # ––––––––––––––––––––––––––––––
   if [ -z "$2" ]; then
 
@@ -385,9 +385,10 @@ if [ -t 0 ]; then
       exit 0
     fi
 
-    less $1${ext}
+    open $1${ext}
     exit 0
   fi
+
 
 
   # pass note as argument to another program (if two args are passed)

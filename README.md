@@ -6,7 +6,7 @@ notes
 
 ## features
 
-* fast, natural syntax for viewing and manipulating notes **from any directory**
+* fast, natural syntax for manipulating notes **from any directory**
 
 * quickly find notes using tab completion
 
@@ -42,7 +42,7 @@ if you execute **notes** via symlink, *make sure that the name of the target fil
 #### syntax
 ```
 zero arguments          :                           list all notes
-one argument            <note_or_directory>:        display this note, or list all notes under this directory
+one argument            <note_or_directory>:        open this note, or list all notes under this directory
 two arguments           <program> <note>:           pass note as argument to program
 two arguments           <program> <glob_pattern>:   pass all matched notes as arguments to program, replace * with @
 > two arguments         <program> <notes>:          pass notes as arguments to program
@@ -56,7 +56,7 @@ two arguments           <program> <glob_pattern>:   pass all matched notes as ar
 [ -R DIR ]                                          remove (delete) a directory
 [ -m NOTE NEW_NOTE ]                                move a note (change its name)
 [ -f PATTERN ]                                      find notes: search for all notes matching pattern
-[ -o NOTE ]                                         open note
+[ -p NOTE ]                                         print contents of note
 ```
 
 execute `notes -h` to get help and see more options

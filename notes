@@ -234,7 +234,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     # ––––––––––––––––––––––––––––––
     n)
       checkname "$OPTARG"
-      touch "$OPTARG${ext}"
+      mkdir -p $(dirname "$OPTARG${ext}") && touch "$OPTARG${ext}"
       exit 0
     ;;
 
@@ -242,7 +242,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     # ––––––––––––––––––––––––––––––
     N)
       checkname "$OPTARG"
-      mkdir "$OPTARG"
+      mkdir -p "$OPTARG"
       exit 0
     ;;
 

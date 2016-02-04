@@ -2,18 +2,18 @@
 
 
 # dependencies
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 
 # in shell startup file, this makes sure proper completions function (bash or zsh) is initialized
-# which notes >/dev/null && . "$( notes -i )"
+# `which notes >/dev/null && . "$( notes -i )"`
 
-# make notes visible in $PATH
-# ln -s /Users/kylebebak/Dropbox/Programming/__bin/notes/notes ~/bin/notes
+# put notes in $PATH. for example, on OSX:
+# `ln -s </path/to/notes> ~/bin/notes`
 
 
 
 # globals
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 ext=".md"
 bold=`tput bold`
 normal=`tput sgr0`
@@ -29,7 +29,7 @@ init_script="init.sh"
 
 
 # functions
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 function checknote {
   if [ ! -f "$1${ext}" ]; then
     echo "the note ${bold}$1${normal} does not exist"
@@ -40,6 +40,13 @@ function checknote {
 function checkdir {
   if [ ! -d "$1" ]; then
     echo "the directory ${bold}$1${normal} does not exist"
+    exit 1
+  fi
+}
+
+function checknoteordir {
+  if [ ! -f "$1${ext}" ] && [ ! -d "$1" ]; then
+    echo "neither the note nor directory ${bold}$1${normal} exists"
     exit 1
   fi
 }
@@ -100,7 +107,7 @@ function previewnotes {
 
 
 # directories
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 
 # start by getting script path even if it was executed via symlink. will work in bash, sh, ksh (not bsd)
 fullpath=`readlink -f $0 2>/dev/null`
@@ -125,7 +132,7 @@ cd $dir; dir=`pwd -P`; cd $dir
 
 
 # help
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 unset usage
 usage() {
   cat << EOF
@@ -147,8 +154,8 @@ ${bold}DESCRIPTION${normal}
     [ ${bold}-n${normal} NEW_NOTE ]                         create a note
     [ ${bold}-N${normal} NEW_DIR ]                          create a directory
     [ ${bold}-O${normal} ]                                  open notes directory
-    [ ${bold}-p${normal} ]                                  print contents of note
-    [ ${bold}-P${normal} ]                                  display path to notes directory
+    [ ${bold}-p${normal} NOTE ]                             print contents of note
+    [ ${bold}-P${normal} [NOTE_OR_DIR] ]                    print full path to note or directory
     [ ${bold}-r${normal} NOTE ]                             remove (delete) a note
     [ ${bold}-R${normal} DIR ]                              remove (delete) a directory
 
@@ -182,41 +189,41 @@ EOF
 
 
 # parse options and arguments
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
-while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
+# --------------------------------------------------
+while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
   case $opt in
 
-    # custom completions function for returning a list of all notes to ber parsed by completions functions
-    # ––––––––––––––––––––––––––––––
+    # custom completions function for returning a list of all notes to be parsed by completions functions
+    # ------------------------------
     C)
       # ignore directories files, remove leading ./ with sed, ignore dotfiles with path param, remove extension
       for note in `find . -type f ! -path "*/\.*" 2>/dev/null | sed 's/^\.\///'`; do echo "${note%.*}"; done
       exit 0
     ;;
 
-    # path init script for loading custom tab completions
-    # ––––––––––––––––––––––––––––––
+    # path to init script for loading custom tab completions
+    # ------------------------------
     i)
       echo ${root_dir}/${completions_dir}/${init_script}
       exit 0
     ;;
 
     # invoke usage function to print help to the screen
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     h)
       usage
       exit 0
     ;;
 
     # open notes directory
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     O)
       open .
       exit 0
     ;;
 
     # print contents of note
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     p)
       checknote "$OPTARG"
       less "$OPTARG${ext}"
@@ -224,14 +231,19 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # print path to notes directory
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     P)
-      echo $dir
+      if [ -z "$2" ]; then
+        echo "${dir}"
+      else
+        checknoteordir "$2"
+        echo "${dir}/${2}"
+      fi
       exit 0
     ;;
 
     # create a new note
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     n)
       checkname "$OPTARG"
       mkdir -p $(dirname "$OPTARG${ext}") && touch "$OPTARG${ext}"
@@ -239,7 +251,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # create a new directory
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     N)
       checkname "$OPTARG"
       mkdir -p "$OPTARG"
@@ -247,7 +259,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # remove (delete) a note
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     r)
       checknote $OPTARG
       rm "$OPTARG${ext}"
@@ -255,7 +267,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # remove (delete) a directory
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     R)
       checkdir $OPTARG
       rm -dr "$OPTARG"
@@ -263,7 +275,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # move a note (change its name). overwriting an existing note is not allowed
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     m)
       checknote $OPTARG
       checkname "${@:$OPTIND:1}"
@@ -277,7 +289,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # show paths of all notes under home directory with same inode as this note (notes connected by hard links)
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     l)
       checknote $OPTARG
       find ~ -inum `ls -i ${OPTARG}${ext} | awk '{print $1}'` ! -path "${dir}/*" -xdev 2>/dev/null
@@ -285,7 +297,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # create a hard link between source note and target note. source note must exist in notes directory
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     L)
       checknote $OPTARG
       shift; shift
@@ -294,7 +306,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
     ;;
 
     # combine notes (does not delete notes that were combined with target note, creates a new target note if target note did not exist)
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     c)
       checkname "$OPTARG"
       tgt=$OPTARG${ext}
@@ -305,7 +317,6 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
       if [ -f $tgt ]; then
         tgtexists=1
       fi
-
 
       until [ -z "$1" ]
       do
@@ -339,7 +350,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:OPp:r:R:" opt; do
 
 
     # error messages
-    # ––––––––––––––––––––––––––––––
+    # ------------------------------
     \?)
       echo "invalid option: -$OPTARG"
       usage
@@ -360,11 +371,11 @@ done
 
 
 # if standard input is empty
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 if [ -t 0 ]; then
 
   # list all notes (if no args are passed). this function uses find, which allows it to recursively list notes in all subdirectories of notes directory
-  # ––––––––––––––––––––––––––––––
+  # ------------------------------
   if [ -z "$1" ]; then
     previewnotes .
     exit 0
@@ -373,7 +384,7 @@ if [ -t 0 ]; then
 
 
   # open note, or list all notes within a directory (if one arg is passed)
-  # ––––––––––––––––––––––––––––––
+  # ------------------------------
   if [ -z "$2" ]; then
 
     if [ ! -f "$1${ext}" ]; then
@@ -392,7 +403,7 @@ if [ -t 0 ]; then
 
 
   # pass note as argument to another program (if two args are passed)
-  # ––––––––––––––––––––––––––––––
+  # ------------------------------
 
   # make sure first argument is an executable
   checkexec `echo $1 | awk '{ print $1; }'`
@@ -424,7 +435,7 @@ if [ -t 0 ]; then
 
 
   # pass notes as arguments to another program (if more than two args are passed)
-  # ––––––––––––––––––––––––––––––
+  # ------------------------------
   program=$1
   shift
 
@@ -441,7 +452,7 @@ if [ -t 0 ]; then
 
 
 # if standard input is not empty
-# ––––––––––––––––––––––––––––––––––––––––––––––––––
+# --------------------------------------------------
 else
 
   checkname "$1"

@@ -45,7 +45,7 @@ zero arguments          :                           list all notes
 one argument            <note_or_directory>:        open this note, or list all notes under this directory
 two arguments           <program> <note>:           pass note as argument to program
 two arguments           <program> <glob_pattern>:   pass all matched notes as arguments to program, replace * with @
-> two arguments         <program> <notes>:          pass notes as arguments to program
+g.t. two arguments      <program> <notes>:          pass notes as arguments to program
 ```
 
 #### options
@@ -57,6 +57,7 @@ two arguments           <program> <glob_pattern>:   pass all matched notes as ar
 [ -m NOTE NEW_NOTE ]                                move a note (change its name)
 [ -f PATTERN ]                                      find notes: search for all notes matching pattern
 [ -p NOTE ]                                         print contents of note
+[ -P [NOTE_OR_DIR] ]                                print full path to note or directory
 ```
 
 execute `notes -h` to get help and see more options

@@ -42,8 +42,8 @@ if you execute **notes** via symlink, *make sure that the name of the target fil
 #### syntax
 ```
 zero arguments          :                           list all notes
-one argument            <note_or_directory>:        open this note, or list all notes under this directory
-two arguments           <program> <note>:           pass note as argument to program
+one argument            <note_or_dir>:              open this note, or list all notes under this directory
+two arguments           <program> <note_or_dir>:    pass note or directory as argument to program
 two arguments           <program> <glob_pattern>:   pass all matched notes as arguments to program, replace * with @
 g.t. two arguments      <program> <notes>:          pass notes as arguments to program
 ```

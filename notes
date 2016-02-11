@@ -169,8 +169,8 @@ ${_bold}DESCRIPTION${_normal}
     If ${_bold}${name}${_normal} is invoked without any options, the following modes of execution exist:
 
       - zero arguments        :                             list all notes
-      - one argument          <note_or_directory>:          open this note, or list all notes under this directory
-      - two arguments         <program> <note>:             pass note as argument to program
+      - one argument          <note_or_dir>:                open this note, or list all notes under this directory
+      - two arguments         <program> <note_or_dir>:      pass note or directory as argument to program
       - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${_bold}*${_normal} with ${_bold}${_glob}${_normal}
       - g.t. two arguments    <program> <notes>:            pass notes as arguments to program
 
@@ -404,7 +404,7 @@ if [ -t 0 ]; then
 
 
 
-  # pass note as argument to another program (if two args are passed)
+  # pass note or directory as argument to another program (if two args are passed)
   # ------------------------------
 
   # make sure first argument is an executable
@@ -427,8 +427,12 @@ if [ -t 0 ]; then
       $1 ${argument} 2>/dev/null
 
     else
-      checknote $2
-      $1 $2${_ext}
+      checknoteordir $2
+      if [ -f "$2${_ext}" ]; then
+        $1 $2${_ext}
+        exit $?
+      fi
+      $1 $2
     fi
 
     # exit with status code from last command

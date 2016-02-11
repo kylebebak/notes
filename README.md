@@ -50,7 +50,7 @@ g.t. two arguments      <program> <notes>:          pass notes as arguments to p
 
 #### options
 ```
-[ -n NEW_NOTE ]                                     create a note
+[ -n NEW_NOTE ]                                     create and open a note
 [ -N NEW_DIR ]                                      create a directory
 [ -r NOTE ]                                         remove (delete) a note
 [ -R DIR ]                                          remove (delete) a directory

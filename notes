@@ -72,12 +72,12 @@ function checkname {
 function previewnotes {
 
   # for inserting horizontal tab character into sed
-  TRAILINGSPACES=48
-  INDENT="        "
-  MAXCHARS=24
+  TRAILINGSPACES=50
+  INDENT="     "
+  MAXCHARS=25
   DESCRIPTIONCHARS=50
 
-  # exlude dot files, and exclude parent directory
+  # exclude dot files, and exclude parent directory
   find ${1} ! -path ${1} ! -path "*/${1}*" 2>/dev/null | while read x; do
     # remove leading ./ with cut, replace remaining path segments with indent spaces, then remove all non-space chars
     indent=`echo $x | cut -c 3- | sed -E "s:[^/]+/:$INDENT:g" | sed -E "s/[^ ]//g"`
@@ -151,7 +151,7 @@ ${bold}DESCRIPTION${normal}
     [ ${bold}-l${normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
     [ ${bold}-L${normal} SOURCE_NOTE TARGET_NOTE ]          create a hard link between source note and target note. source note must exist in notes directory
     [ ${bold}-m${normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
-    [ ${bold}-n${normal} NEW_NOTE ]                         create a note
+    [ ${bold}-n${normal} NEW_NOTE ]                         create and open a note
     [ ${bold}-N${normal} NEW_DIR ]                          create a directory
     [ ${bold}-O${normal} ]                                  open notes directory
     [ ${bold}-p${normal} NOTE ]                             print contents of note
@@ -247,6 +247,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     n)
       checkname "$OPTARG"
       mkdir -p $(dirname "$OPTARG${ext}") && touch "$OPTARG${ext}"
+      open "$OPTARG${ext}"
       exit 0
     ;;
 

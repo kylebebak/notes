@@ -14,16 +14,16 @@
 
 # globals
 # --------------------------------------------------
-ext=".md"
-bold=`tput bold`
-normal=`tput sgr0`
+_ext=".md"
+_bold=`tput bold`
+_normal=`tput sgr0`
 # @ is not expanded by bash or zsh
-glob="@"
+_glob="@"
 
 # these parameters should not be modified
-notes_dir="_notes"
-completions_dir="_completions"
-init_script="init.sh"
+_notes_dir="_notes"
+_completions_dir="_completions"
+_init_script="init.sh"
 
 
 
@@ -31,22 +31,22 @@ init_script="init.sh"
 # functions
 # --------------------------------------------------
 function checknote {
-  if [ ! -f "$1${ext}" ]; then
-    echo "the note ${bold}$1${normal} does not exist"
+  if [ ! -f "$1${_ext}" ]; then
+    echo "the note ${_bold}$1${_normal} does not exist"
     exit 1
   fi
 }
 
 function checkdir {
   if [ ! -d "$1" ]; then
-    echo "the directory ${bold}$1${normal} does not exist"
+    echo "the directory ${_bold}$1${_normal} does not exist"
     exit 1
   fi
 }
 
 function checknoteordir {
-  if [ ! -f "$1${ext}" ] && [ ! -d "$1" ]; then
-    echo "neither the note nor directory ${bold}$1${normal} exists"
+  if [ ! -f "$1${_ext}" ] && [ ! -d "$1" ]; then
+    echo "neither the note nor directory ${_bold}$1${_normal} exists"
     exit 1
   fi
 }
@@ -56,7 +56,7 @@ function checkexec {
   if hash $1 2>/dev/null; then
     :
   else
-    echo "the executable ${bold}$1${normal} does not exist"
+    echo "the executable ${_bold}$1${_normal} does not exist"
     exit 1
   fi
 }
@@ -71,14 +71,14 @@ function checkname {
 
 function previewnotes {
 
-  # for inserting horizontal tab character into sed
   TRAILINGSPACES=50
   INDENT="     "
   MAXCHARS=25
   DESCRIPTIONCHARS=50
 
-  # exclude dot files, and exclude parent directory
-  find ${1} ! -path ${1} ! -path "*/${1}*" 2>/dev/null | while read x; do
+  # ignore parent directory, ignore hidden files and directories, ignore files without proper extension
+  find ${1} ! -path ${1} ! -path "*/\.*" \( -type f -name "*${_ext}" -or -type d \) 2>/dev/null \
+  | while read x; do
     # remove leading ./ with cut, replace remaining path segments with indent spaces, then remove all non-space chars
     indent=`echo $x | cut -c 3- | sed -E "s:[^/]+/:$INDENT:g" | sed -E "s/[^ ]//g"`
 
@@ -91,7 +91,7 @@ function previewnotes {
 
     if [ -f $x ]; then
       desc="`head -c $DESCRIPTIONCHARS $x | tr '\n' ' ' 2>/dev/null`..."
-      echo -e "${indent}${bold}${name}${normal}${spaces}${desc}"
+      echo -e "${indent}${_bold}${name}${_normal}${spaces}${desc}"
 
     elif [ -d $x ]; then
       desc="/"
@@ -125,7 +125,7 @@ fi
 name=$(basename ${fullpath})
 root_dir=$(dirname ${fullpath})
 
-dir="${root_dir}/${notes_dir}"
+dir="${root_dir}/${_notes_dir}"
 # cd into physical notes directory
 cd $dir; dir=`pwd -P`; cd $dir
 
@@ -137,49 +137,49 @@ unset usage
 usage() {
   cat << EOF
 
-${bold}NAME${normal}
-    ${bold}${name}${normal}
+${_bold}NAME${_normal}
+    ${_bold}${name}${_normal}
 
-${bold}SYNOPSIS${normal}
-    ${bold}${name}${normal} [${bold}-hclLmnNOpPrR${normal}] note ...
+${_bold}SYNOPSIS${_normal}
+    ${_bold}${name}${_normal} [${_bold}-hclLmnNOpPrR${_normal}] note ...
 
-${bold}DESCRIPTION${normal}
-    [ ${bold}-h${normal} ]                                  get help (display this page)
-    [ ${bold}-c${normal} TGT_NOTE NOTE_A NOTE_B ... ]       combine notes: append text in notes a,b,... to target note. can be used to copy a note**
-    [ ${bold}-f${normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
-    [ ${bold}-F${normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
-    [ ${bold}-l${normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
-    [ ${bold}-L${normal} SOURCE_NOTE TARGET_NOTE ]          create a hard link between source note and target note. source note must exist in notes directory
-    [ ${bold}-m${normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
-    [ ${bold}-n${normal} NEW_NOTE ]                         create and open a note
-    [ ${bold}-N${normal} NEW_DIR ]                          create a directory
-    [ ${bold}-O${normal} ]                                  open notes directory
-    [ ${bold}-p${normal} NOTE ]                             print contents of note
-    [ ${bold}-P${normal} [NOTE_OR_DIR] ]                    print full path to note or directory
-    [ ${bold}-r${normal} NOTE ]                             remove (delete) a note
-    [ ${bold}-R${normal} DIR ]                              remove (delete) a directory
+${_bold}DESCRIPTION${_normal}
+    [ ${_bold}-h${_normal} ]                                  get help (display this page)
+    [ ${_bold}-c${_normal} TGT_NOTE NOTE_A NOTE_B ... ]       combine notes: append text in notes a,b,... to target note. can be used to copy a note**
+    [ ${_bold}-f${_normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
+    [ ${_bold}-F${_normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
+    [ ${_bold}-l${_normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
+    [ ${_bold}-L${_normal} SOURCE_NOTE TARGET_NOTE ]          create a hard link between source note and target note. source note must exist in notes directory
+    [ ${_bold}-m${_normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
+    [ ${_bold}-n${_normal} NEW_NOTE ]                         create and open a note
+    [ ${_bold}-N${_normal} NEW_DIR ]                          create a directory
+    [ ${_bold}-O${_normal} ]                                  open notes directory
+    [ ${_bold}-p${_normal} NOTE ]                             print contents of note
+    [ ${_bold}-P${_normal} [NOTE_OR_DIR] ]                    print full path to note or directory
+    [ ${_bold}-r${_normal} NOTE ]                             remove (delete) a note
+    [ ${_bold}-R${_normal} DIR ]                              remove (delete) a directory
 
     **
       ${name} -c copy original
 
 
-    All of these options are mutually exclusive, i.e. at most one option should be passed to ${bold}${name}${normal}.
+    All of these options are mutually exclusive, i.e. at most one option should be passed to ${_bold}${name}${_normal}.
 
 
-    If ${bold}${name}${normal} is invoked without any options, the following modes of execution exist:
+    If ${_bold}${name}${_normal} is invoked without any options, the following modes of execution exist:
 
       - zero arguments        :                             list all notes
       - one argument          <note_or_directory>:          open this note, or list all notes under this directory
       - two arguments         <program> <note>:             pass note as argument to program
-      - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${bold}*${normal} with ${bold}${glob}${normal}
+      - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${_bold}*${_normal} with ${_bold}${_glob}${_normal}
       - g.t. two arguments    <program> <notes>:            pass notes as arguments to program
 
-${bold}EXAMPLES${normal}
-      - notes 'grep password' ${glob}
+${_bold}EXAMPLES${_normal}
+      - notes 'grep password' ${_glob}
       - notes open github
 
-${bold}EXTENSIONS${normal}
-      All notes have a default extension of ${bold}${ext}${normal}, which is assigned to the variable ${bold}ext${normal} in the source code of this program. Edit this variable to change or remove the extension. The extension should never be passed to ${bold}notes${normal} in any of its modes of execution.
+${_bold}EXTENSIONS${_normal}
+      All notes have a default extension of ${_bold}${_ext}${_normal}, which is assigned to the variable ${_bold}_ext${_normal} in the source code of this program. Edit this variable to change or remove the extension. The extension should never be passed to ${_bold}notes${_normal} in any of its modes of execution.
 
 EOF
 }
@@ -196,15 +196,16 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # custom completions function for returning a list of all notes to be parsed by completions functions
     # ------------------------------
     C)
-      # ignore directories files, remove leading ./ with sed, ignore dotfiles with path param, remove extension
-      for note in `find . -type f ! -path "*/\.*" 2>/dev/null | sed 's/^\.\///'`; do echo "${note%.*}"; done
+      # ignore directories, ignore hidden files, remove leading ./ with sed, remove extension
+      for note in `find . -type f -name "*${_ext}" ! -path "*/\.*" 2>/dev/null \
+      | sed 's/^\.\///'`; do echo "${note%.*}"; done
       exit 0
     ;;
 
     # path to init script for loading custom tab completions
     # ------------------------------
     i)
-      echo ${root_dir}/${completions_dir}/${init_script}
+      echo ${root_dir}/${_completions_dir}/${_init_script}
       exit 0
     ;;
 
@@ -226,7 +227,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # ------------------------------
     p)
       checknote "$OPTARG"
-      less "$OPTARG${ext}"
+      less "$OPTARG${_ext}"
       exit 0
     ;;
 
@@ -246,8 +247,8 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # ------------------------------
     n)
       checkname "$OPTARG"
-      mkdir -p $(dirname "$OPTARG${ext}") && touch "$OPTARG${ext}"
-      open "$OPTARG${ext}"
+      mkdir -p $(dirname "$OPTARG${_ext}") && touch "$OPTARG${_ext}"
+      open "$OPTARG${_ext}"
       exit 0
     ;;
 
@@ -263,7 +264,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # ------------------------------
     r)
       checknote $OPTARG
-      rm "$OPTARG${ext}"
+      rm "$OPTARG${_ext}"
       exit 0
     ;;
 
@@ -280,12 +281,12 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     m)
       checknote $OPTARG
       checkname "${@:$OPTIND:1}"
-      if [ -f ${@:$OPTIND:1}${ext} ]; then
-        echo "the note ${bold}${@:$OPTIND:1}${normal} already exists, and can not be overwritten with the -m option"
+      if [ -f ${@:$OPTIND:1}${_ext} ]; then
+        echo "the note ${_bold}${@:$OPTIND:1}${_normal} already exists, and can not be overwritten with the -m option"
         exit 1
       fi
 
-      mv $OPTARG${ext} ${@:$OPTIND:1}${ext}
+      mv $OPTARG${_ext} ${@:$OPTIND:1}${_ext}
       exit 0
     ;;
 
@@ -293,7 +294,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # ------------------------------
     l)
       checknote $OPTARG
-      find ~ -inum `ls -i ${OPTARG}${ext} | awk '{print $1}'` ! -path "${dir}/*" -xdev 2>/dev/null
+      find ~ -inum `ls -i ${OPTARG}${_ext} | awk '{print $1}'` ! -path "${dir}/*" -xdev 2>/dev/null
       exit 0
     ;;
 
@@ -302,7 +303,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     L)
       checknote $OPTARG
       shift; shift
-      ln "$OPTARG${ext}" $1
+      ln "$OPTARG${_ext}" $1
       exit 0
     ;;
 
@@ -310,7 +311,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # ------------------------------
     c)
       checkname "$OPTARG"
-      tgt=$OPTARG${ext}
+      tgt=$OPTARG${_ext}
       # shift pass -c and $OPTARG
       shift; shift
 
@@ -321,7 +322,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
 
       until [ -z "$1" ]
       do
-        if [ -f $1${ext} ]; then
+        if [ -f $1${_ext} ]; then
 
           if [ -z $tgtexists ]; then
             tgtexists=1
@@ -329,9 +330,9 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
             printf "\n______________________________\n" >> $tgt
           fi
 
-          cat $1${ext} >> $tgt
+          cat $1${_ext} >> $tgt
         else
-          echo "the note ${bold}$1${normal} does not exist"
+          echo "the note ${_bold}$1${_normal} does not exist"
         fi
         shift
       done
@@ -388,16 +389,16 @@ if [ -t 0 ]; then
   # ------------------------------
   if [ -z "$2" ]; then
 
-    if [ ! -f "$1${ext}" ]; then
+    if [ ! -f "$1${_ext}" ]; then
       if [ ! -d "$1" ]; then
-        echo "neither the note nor directory ${bold}$1${normal} exists"
+        echo "neither the note nor directory ${_bold}$1${_normal} exists"
         exit 1
       fi
       previewnotes $1
       exit 0
     fi
 
-    open $1${ext}
+    open $1${_ext}
     exit 0
   fi
 
@@ -413,13 +414,13 @@ if [ -t 0 ]; then
 
     argument=""
 
-    if [[ "$2" == *"${glob}"* ]]; then
-      glob=`echo $2 | sed "s/${glob}/.*/g"`
+    if [[ "$2" == *"${_glob}"* ]]; then
+      glob_pattern=`echo $2 | sed "s/${_glob}/.*/g"`
 
-      argument=`find . -type f ! -path "*/\.*" 2>/dev/null | grep "${glob}"`
+      argument=`find . -type f ! -path "*/\.*" 2>/dev/null | grep "${glob_pattern}"`
 
       if [ -z "$argument" ]; then
-        echo "globbing error for pattern ${bold}"$glob"${normal}: no such notes exist"
+        echo "globbing error for pattern ${_bold}${glob_pattern}${_normal}: no such notes exist"
         exit
       fi
 
@@ -427,7 +428,7 @@ if [ -t 0 ]; then
 
     else
       checknote $2
-      $1 $2${ext}
+      $1 $2${_ext}
     fi
 
     # exit with status code from last command
@@ -444,7 +445,7 @@ if [ -t 0 ]; then
   noteargs=""
   for note in $@; do
     checknote $note
-    noteargs="${noteargs}`echo $note`${ext} ";
+    noteargs="${noteargs}`echo $note`${_ext} ";
   done
   $program ${noteargs}
   exit 0
@@ -463,10 +464,10 @@ else
   fi
 
   # when reading from stdin a new note is created if the note specified does not exist. printf preserves whitespace, unlike echo
-  echo "" >> $1${ext}
+  echo "" >> $1${_ext}
   while IFS='' read -r line; do
-    # echo $line >> $1${ext}
-    printf "%s\n" "$line" >> $1${ext}
+    # echo $line >> $1${_ext}
+    printf "%s\n" "$line" >> $1${_ext}
   done
 fi
 exit 0

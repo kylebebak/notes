@@ -1,17 +1,5 @@
 #!/bin/bash
 
-
-# dependencies
-# --------------------------------------------------
-
-# in shell startup file, this makes sure proper completions function (bash or zsh) is initialized
-# `which notes >/dev/null && . "$( notes -i )"`
-
-# put notes in $PATH. for example, on OSX:
-# `ln -s </path/to/notes> ~/bin/notes`
-
-
-
 # globals
 # --------------------------------------------------
 _ext=".md"
@@ -23,7 +11,8 @@ _glob="@"
 # these parameters should not be modified
 _notes_dir="_notes"
 _completions_dir="_completions"
-_init_script="init.sh"
+_completions_init_script="init.sh"
+
 
 
 
@@ -205,7 +194,7 @@ while getopts ":hc:Cf:F:il:L:m:n:N:Op:Pr:R:" opt; do
     # path to init script for loading custom tab completions
     # ------------------------------
     i)
-      echo ${root_dir}/${_completions_dir}/${_init_script}
+      echo ${root_dir}/${_completions_dir}/${_completions_init_script}
       exit 0
     ;;
 

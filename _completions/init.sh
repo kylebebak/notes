@@ -2,10 +2,10 @@
 
 if [ -n "$BASH_VERSION" ]; then
   root="$(dirname "${BASH_SOURCE[0]}")"
-  source "$root/completions.bash"
+  source "$root/c.bash"
 
 elif [ -n "$ZSH_VERSION" ]; then
   root="$(dirname "$0")"
-  source "$root/completions.zsh"
+  source "$root/c.zsh"
 fi
 

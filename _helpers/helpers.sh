@@ -1,5 +1,18 @@
-# functions
-# --------------------------------------------------
+function setdir {
+  _dir=$1
+
+  while [[ ! -d "${_dir}" ]]; do
+    if [ -n "${_dir}" ]; then
+      printf "\n${_bold}${_dir}${_normal} is not a valid notes directory\n"
+    fi
+    printf "Enter the FULL PATH to your notes directory:\n"
+    read _dir
+  done
+
+  printf "_ext=${_ext}\n_dir=${_dir}" > "${rootdir}/_config/env.sh"
+  exit 0
+}
+
 function checknote {
   if [ ! -f "$1${_ext}" ]; then
     echo "the note ${_bold}$1${_normal} does not exist"
@@ -88,6 +101,7 @@ ${_bold}SYNOPSIS${_normal}
 ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-h${_normal} ]                                  get help (display this page)
     [ ${_bold}-c${_normal} TGT_NOTE NOTE_A NOTE_B ... ]       combine notes: append text in notes a,b,... to target note. can be used to copy a note**
+    [ ${_bold}-d${_normal} ]                                  open prompt to reset notes directory
     [ ${_bold}-f${_normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
     [ ${_bold}-F${_normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
     [ ${_bold}-l${_normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
@@ -97,7 +111,7 @@ ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-N${_normal} NEW_DIR ]                          create a directory
     [ ${_bold}-O${_normal} ]                                  open notes directory
     [ ${_bold}-p${_normal} NOTE ]                             print contents of note
-    [ ${_bold}-P${_normal} [NOTE_OR_DIR] ]                    print full path to note or directory
+    [ ${_bold}-P${_normal} NOTE_OR_DIR ]                      print full path to note or directory
     [ ${_bold}-r${_normal} NOTE ]                             remove (delete) a note
     [ ${_bold}-R${_normal} DIR ]                              remove (delete) a directory
 

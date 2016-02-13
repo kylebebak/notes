@@ -14,8 +14,6 @@ notes
 
 * use any directory structure to organize notes
 
-* create and keep track of hard links between base notes and their siblings
-
 
 
 ## installation
@@ -32,9 +30,7 @@ if you execute **notes** via symlink, *make sure that the name of the target fil
 
 #### extra
 
-* the default extension for all notes is `.md`. markdown's formatting perks allow notes to be dynamic without sacrificing portability. the extension is set in the `ext` variable in the `notes` executable, and can be modified there
-
-* clone notes into your dropbox to sync your notes and access them from all your devices
+* the default extension for all notes is `.md`. markdown's formatting perks allow notes to be dynamic without sacrificing portability. the extension is set in the `_ext` variable in `_config/env.sh`, and can be modified there
 
 
 ## usage
@@ -57,7 +53,8 @@ g.t. two arguments      <program> <notes>:          pass notes as arguments to p
 [ -m NOTE NEW_NOTE ]                                move a note (change its name)
 [ -f PATTERN ]                                      find notes: search for all notes matching pattern
 [ -p NOTE ]                                         print contents of note
-[ -P [NOTE_OR_DIR] ]                                print full path to note or directory
+[ -P NOTE_OR_DIR ]                                  print full path to note or directory
+[ -d ]                                              open prompt to reset notes directory                                  
 ```
 
 execute `notes -h` to get help and see more options

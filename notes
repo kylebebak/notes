@@ -35,10 +35,10 @@ source "${rootdir}/_helpers/helpers.sh"
 cd ${_dir} 2>/dev/null; dir=`pwd -P`; cd ${dir}
 
 
-
+optstring=":c:Cdf:F:hil:L:m:n:N:Op:Pr:R:"
 # completions options that need to be parsed before potentially exiting program
 # --------------------------------------------------
-while getopts ":iC" opt; do
+while getopts "$optstring" opt; do
   case $opt in
 
     # path to init script for loading custom tab completions
@@ -57,27 +57,28 @@ while getopts ":iC" opt; do
       exit 0
     ;;
 
+    # prompt user to set a new notes directory
+    # ------------------------------
+    d)
+      setdir ""
+      exit 0
+    ;;
+
   esac
 done
 
 
-
-# if notes directory doesn't exist, prompt user to enter valid notes directory, and update _config/env.sh
+# prompt user to enter valid notes directory, and update _config/env.sh
 if [ ! -d "${_dir}" ]; then
-  while [[ ! -d "${_dir}" ]]; do
-    printf "\n${_bold}${_dir}${_normal} is not a valid notes directory\n"
-    printf "Enter the FULL PATH to your notes directory:\n"
-    read _dir
-  done
-  printf "_ext=${_ext}\n_dir=${_dir}" > "${rootdir}/_config/env.sh"
-  exit 1
+  setdir "${_dir}"
 fi
 
 
-
+# reset options index
+OPTIND=1
 # parse options and arguments
 # --------------------------------------------------
-while getopts ":hc:f:F:l:L:m:n:N:Op:Pr:R:" opt; do
+while getopts "$optstring" opt; do
   case $opt in
 
     # invoke usage function to print help to the screen

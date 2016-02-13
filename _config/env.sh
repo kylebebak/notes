@@ -1,2 +1,2 @@
-_ext=".md"
-_notes_dir="/Users/kylebebak/Dropbox/Programming/__bin/notes/notes"
+_ext=.md
+_dir=/Users/kylebebak/Dropbox/Notes

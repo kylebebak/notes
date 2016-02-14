@@ -23,7 +23,7 @@ brew install notes
 ```
 
 #### Tab completion (bash and zsh)
-insert the following into your shell startup file (e.g. `.bash_profile`).
+insert the following into your shell startup file (e.g. `.bash_profile`).  
 `which notes >/dev/null && . "$( notes -i )"`
 
 #### Notes directory
@@ -37,7 +37,7 @@ If you execute **notes** via symlink, *make sure that the name of the target fil
 
 ## Extra
 
-* The default extension for notes is `md`, because markdown is great. If you want to change it, edit in the `_ext` variable in `_config/env.sh`.
+* The default extension for notes is `md`, because markdown is great. If you want to change it, edit the `_ext` variable in `_config/env.sh`.
 
 
 ## Usage

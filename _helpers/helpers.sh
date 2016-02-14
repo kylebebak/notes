@@ -96,16 +96,13 @@ ${_bold}NAME${_normal}
     ${_bold}${name}${_normal}
 
 ${_bold}SYNOPSIS${_normal}
-    ${_bold}${name}${_normal} [${_bold}-hclLmnNOpPrR${_normal}] note ...
+    ${_bold}${name}${_normal} [${_bold}-hmnNOpPrR${_normal}] note ...
 
 ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-h${_normal} ]                                  get help (display this page)
-    [ ${_bold}-c${_normal} TGT_NOTE NOTE_A NOTE_B ... ]       combine notes: append text in notes a,b,... to target note. can be used to copy a note**
     [ ${_bold}-d${_normal} ]                                  open prompt to reset notes directory
     [ ${_bold}-f${_normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
     [ ${_bold}-F${_normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
-    [ ${_bold}-l${_normal} NOTE ]                             show paths of all notes under home directory with same inode as this note (notes connected by hard links)
-    [ ${_bold}-L${_normal} SOURCE_NOTE TARGET_NOTE ]          create a hard link between source note and target note. source note must exist in notes directory
     [ ${_bold}-m${_normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
     [ ${_bold}-n${_normal} NEW_NOTE ]                         create and open a note
     [ ${_bold}-N${_normal} NEW_DIR ]                          create a directory
@@ -115,12 +112,7 @@ ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-r${_normal} NOTE ]                             remove (delete) a note
     [ ${_bold}-R${_normal} DIR ]                              remove (delete) a directory
 
-    **
-      ${name} -c copy original
-
-
     All of these options are mutually exclusive, i.e. at most one option should be passed to ${_bold}${name}${_normal}.
-
 
     If ${_bold}${name}${_normal} is invoked without any options, the following modes of execution exist:
 
@@ -130,11 +122,7 @@ ${_bold}DESCRIPTION${_normal}
       - two arguments         <program> <glob_pattern>:     pass all matched notes as arguments to program, simply replace ${_bold}*${_normal} with ${_bold}${_glob}${_normal}
       - g.t. two arguments    <program> <notes>:            pass notes as arguments to program
 
-${_bold}EXAMPLES${_normal}
-      - notes 'grep password' ${_glob}
-      - notes open github
-
 ${_bold}EXTENSIONS${_normal}
-      All notes have a default extension of ${_bold}${_ext}${_normal}, which is assigned to the variable ${_bold}_ext${_normal} in the source code of this program. Edit this variable to change or remove the extension. The extension should never be passed to ${_bold}notes${_normal} in any of its modes of execution.
+      Notes have a default extension of ${_bold}md${_normal}, which is assigned to the variable ${_bold}_ext${_normal} in ${_bold}_config/env.sh${_normal}. Edit this variable to change the extension.
 EOF
 }

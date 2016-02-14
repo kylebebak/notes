@@ -35,7 +35,7 @@ source "${rootdir}/_helpers/helpers.sh"
 cd ${_dir} 2>/dev/null; dir=`pwd -P`; cd ${dir}
 
 
-optstring=":c:Cdf:F:hil:L:m:n:N:Op:Pr:R:"
+optstring=":Cdf:F:him:n:N:Op:Pr:R:"
 # completions options that need to be parsed before potentially exiting program
 # --------------------------------------------------
 while getopts "$optstring" opt; do
@@ -162,56 +162,6 @@ while getopts "$optstring" opt; do
       exit 0
     ;;
 
-    # show paths of all notes under home directory with same inode as this note (notes connected by hard links)
-    # ------------------------------
-    l)
-      checknote $OPTARG
-      find ~ -inum `ls -i ${OPTARG}${_ext} | awk '{print $1}'` ! -path "${dir}/*" -xdev 2>/dev/null
-      exit 0
-    ;;
-
-    # create a hard link between source note and target note. source note must exist in notes directory
-    # ------------------------------
-    L)
-      checknote $OPTARG
-      shift; shift
-      ln "$OPTARG${_ext}" $1
-      exit 0
-    ;;
-
-    # combine notes (does not delete notes that were combined with target note, creates a new target note if target note did not exist)
-    # ------------------------------
-    c)
-      checkname "$OPTARG"
-      tgt=$OPTARG${_ext}
-      # shift pass -c and $OPTARG
-      shift; shift
-
-      tgtexists=""
-      if [ -f $tgt ]; then
-        tgtexists=1
-      fi
-
-      until [ -z "$1" ]
-      do
-        if [ -f $1${_ext} ]; then
-
-          if [ -z $tgtexists ]; then
-            tgtexists=1
-          else
-            printf "\n______________________________\n" >> $tgt
-          fi
-
-          cat $1${_ext} >> $tgt
-        else
-          echo "the note ${_bold}$1${_normal} does not exist"
-        fi
-        shift
-      done
-
-      exit 0
-    ;;
-
     f)
       egrep -ri $OPTARG .
       exit 0
@@ -221,7 +171,6 @@ while getopts "$optstring" opt; do
       egrep -ril $OPTARG .
       exit 0
     ;;
-
 
     # error messages
     # ------------------------------
@@ -240,107 +189,75 @@ done
 
 
 
-
-
-# if standard input is empty
-# --------------------------------------------------
-if [ -t 0 ]; then
-
-  # list all notes (if no args are passed). this function uses find, which allows it to recursively list notes in all subdirectories of notes directory
-  # ------------------------------
-  if [ -z "$1" ]; then
-    previewnotes .
-    exit 0
-  fi
-
-
-
-  # open note, or list all notes within a directory (if one arg is passed)
-  # ------------------------------
-  if [ -z "$2" ]; then
-
-    if [ ! -f "$1${_ext}" ]; then
-      if [ ! -d "$1" ]; then
-        echo "neither the note nor directory ${_bold}$1${_normal} exists"
-        exit 1
-      fi
-      previewnotes $1
-      exit 0
-    fi
-
-    open $1${_ext}
-    exit 0
-  fi
-
-
-
-  # pass note or directory as argument to another program (if two args are passed)
-  # ------------------------------
-
-  # make sure first argument is an executable
-  checkexec `echo $1 | awk '{ print $1; }'`
-
-  if [ -z "$3" ]; then
-
-    argument=""
-
-    if [[ "$2" == *"${_glob}"* ]]; then
-      glob_pattern=`echo $2 | sed "s/${_glob}/.*/g"`
-
-      argument=`find . -type f ! -path "*/\.*" 2>/dev/null | grep "${glob_pattern}"`
-
-      if [ -z "$argument" ]; then
-        echo "globbing error for pattern ${_bold}${glob_pattern}${_normal}: no such notes exist"
-        exit
-      fi
-
-      $1 ${argument} 2>/dev/null
-
-    else
-      checknoteordir $2
-      if [ -f "$2${_ext}" ]; then
-        $1 $2${_ext}
-        exit $?
-      fi
-      $1 $2
-    fi
-
-    # exit with status code from last command
-    exit $?
-  fi
-
-
-  # pass notes as arguments to another program (if more than two args are passed)
-  # ------------------------------
-  program=$1
-  shift
-
-  echo $@
-  noteargs=""
-  for note in $@; do
-    checknote $note
-    noteargs="${noteargs}`echo $note`${_ext} ";
-  done
-  $program ${noteargs}
+# list all notes (if no args are passed). this function uses find, which allows it to recursively list notes in all subdirectories of notes directory
+# ------------------------------
+if [ -z "$1" ]; then
+  previewnotes .
   exit 0
+fi
 
 
+# open note, or list all notes within a directory (if one arg is passed)
+# ------------------------------
+if [ -z "$2" ]; then
 
-# if standard input is not empty
-# --------------------------------------------------
-else
-
-  checkname "$1"
-  if [ -z "$1" ]; then
-    echo "to read from stdin and append to a note, a note must be specified"
-    exit 1
+  if [ ! -f "$1${_ext}" ]; then
+    if [ ! -d "$1" ]; then
+      echo "neither the note nor directory ${_bold}$1${_normal} exists"
+      exit 1
+    fi
+    previewnotes $1
+    exit 0
   fi
 
-  # when reading from stdin a new note is created if the note specified does not exist. printf preserves whitespace, unlike echo
-  echo "" >> $1${_ext}
-  while IFS='' read -r line; do
-    printf "%s\n" "$line" >> $1${_ext}
-  done
+  open $1${_ext}
+  exit 0
 fi
-exit 0
 
+
+# pass note or directory as argument to another program (if two args are passed)
+# ------------------------------
+checkexec `echo $1 | awk '{ print $1; }'` # make sure first argument is an executable
+if [ -z "$3" ]; then
+
+  argument=""
+
+  if [[ "$2" == *"${_glob}"* ]]; then
+    glob_pattern=`echo $2 | sed "s/${_glob}/.*/g"`
+
+    argument=`find . -type f ! -path "*/\.*" 2>/dev/null | grep "${glob_pattern}"`
+
+    if [ -z "$argument" ]; then
+      echo "globbing error for pattern ${_bold}${glob_pattern}${_normal}: no such notes exist"
+      exit
+    fi
+
+    $1 ${argument} 2>/dev/null
+
+  else
+    checknoteordir $2
+    if [ -f "$2${_ext}" ]; then
+      $1 $2${_ext}
+      exit $?
+    fi
+    $1 $2
+  fi
+
+  # exit with status code from last command
+  exit $?
+fi
+
+
+# pass notes as arguments to another program (if more than two args are passed)
+# ------------------------------
+program=$1
+shift
+
+echo $@
+noteargs=""
+for note in $@; do
+  checknote $note
+  noteargs="${noteargs}`echo $note`${_ext} ";
+done
+$program ${noteargs}
+exit 0

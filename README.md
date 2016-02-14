@@ -23,7 +23,7 @@ brew install notes
 ```
 
 #### Tab completion (bash and zsh)
-insert the following into your shell startup file (e.g. `.bash_profile`).  
+Insert the following into your shell startup file (e.g. `.bash_profile`).  
 `which notes >/dev/null && . "$( notes -i )"`
 
 #### Notes directory

@@ -3,7 +3,7 @@ notes
 
 **notes** is a command line program that provides quick access, editing capability, and search functionality to all notes under a directory of your choosing. Under your notes directory, you can organize your notes into any folder structure you like.
 
-The default extension for notes is `md`. the extension is not part of notes' syntax. **notes** supports **_tab completion_** and **_wildcard matching_** from any directory: the `*` wildcard is replaced by `@`.
+The default extension for notes is `md`. The extension is not part of notes' syntax. **notes** supports **_tab completion_** and **_wildcard matching_** from any directory: the `*` wildcard is replaced by `@`.
 
 
 ## Features

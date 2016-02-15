@@ -6,28 +6,25 @@ _bold=`tput bold`
 _normal=`tput sgr0`
 # @ is not expanded by bash or zsh
 _glob="@"
+name=notes
 
 
 
 # directories and imports
 # --------------------------------------------------
 
-# start by getting script path even if it was executed via symlink. will work in bash, sh, ksh (not bsd)
-scriptpath=`readlink -f $0 2>/dev/null`
+# start by getting directory of notes executable, resolving symlinks along the way
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  # resolve $SOURCE until file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  # if $SOURCE was a relative symlink, resolve it relative to path where symlink was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+rootdir=$(dirname "${DIR}") # up from bin to root directory
 
-# will work in tcsh, csh (and bsd)
-if [ $? -ne 0 ]; then
-  scriptpath=`readlink $0 2>/dev/null`
-
-  # will work if script was not executed via symlink
-  if [ $? -ne 0 ]; then
-    scriptpath=`echo $0`
-  fi
-fi
-
-rootdir=$(dirname "${scriptpath}")
-rootdir="$(dirname "$rootdir")" # up from bin to root directory
-name=$(basename ${scriptpath})
 # import user-defined variables
 source "${rootdir}/_config/env.sh"
 # import helpers
@@ -36,6 +33,9 @@ source "${rootdir}/_helpers/helpers.sh"
 cd ${_dir} 2>/dev/null; dir=`pwd -P`; cd ${dir}
 
 
+
+# main program logic
+# --------------------------------------------------
 optstring=":Cdf:F:him:n:N:Op:Pr:R:"
 # completions options that need to be parsed before potentially exiting program
 # --------------------------------------------------
@@ -190,7 +190,7 @@ done
 
 
 
-# list all notes (if no args are passed). this function uses find, which allows it to recursively list notes in all subdirectories of notes directory
+# list all notes (if no args are passed)
 # ------------------------------
 if [ -z "$1" ]; then
   previewnotes .
@@ -198,7 +198,7 @@ if [ -z "$1" ]; then
 fi
 
 
-# open note, or list all notes within a directory (if one arg is passed)
+# open note, or list all notes within subdirectory (if one arg is passed)
 # ------------------------------
 if [ -z "$2" ]; then
 

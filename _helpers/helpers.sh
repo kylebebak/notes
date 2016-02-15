@@ -51,6 +51,7 @@ function checkname {
   fi
 }
 
+# use find to recursively list notes in all subdirectories of specified directory
 function previewnotes {
 
   TRAILINGSPACES=50

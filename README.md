@@ -16,7 +16,7 @@ The default extension for notes is `md`. the extension is not part of notes' syn
 
 ## Installation
 
-#### on OSX
+#### OSX
 ```sh
 brew tap kylebebak/notes
 brew install notes
@@ -30,9 +30,10 @@ Insert the following into your shell startup file (e.g. `.bash_profile`).
 The first time you run **notes**, you will be prompted to choose your notes directory. If you ever want to change this directory, run `notes -d`.
 
 #### Other systems
-Clone this repo and either add the root directory to your `$PATH`, or create a symlink in your `$PATH` that points to the **notes** executable in the root directory. Use `chmod` to give yourself execution permission over **notes**.
 
-If you execute **notes** via symlink, *make sure that the name of the target file (the symlink) is also notes*. Otherwise, tab completion won't work.
+Clone this repo, or download and unzip the [tarball](https://github.com/kylebebak/notes/archive/1.0.0.tar.gz). Either add the `bin` directory to your `$PATH`, or create a symlink in your `$PATH` that points to the **notes** executable in the `bin` directory.
+
+If you execute **notes** via symlink, *make sure that the name of the target file (the symlink) is also notes*. Otherwise, tab completions won't work.
 
 
 ## Extra
@@ -68,4 +69,4 @@ Execute `notes -h` to get help and see more options.
 
 
 ## License
-This code is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+This code is licensed under the [MIT License](https://opensource.org/licenses/MIT).

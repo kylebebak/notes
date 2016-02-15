@@ -25,7 +25,8 @@ if [ $? -ne 0 ]; then
   fi
 fi
 
-rootdir=$(dirname ${scriptpath})
+rootdir=$(dirname "${scriptpath}")
+rootdir="$(dirname "$rootdir")" # up from bin to root directory
 name=$(basename ${scriptpath})
 # import user-defined variables
 source "${rootdir}/_config/env.sh"

@@ -1,12 +1,12 @@
 function setdir {
   _dir=$1
 
-  while [[ ! -d "${_dir}" ]]; do
-    if [ -n "${_dir}" ]; then
+  while [[ ! -d "${_dir}" ]] || [[ ! "${_dir}" = /* ]]; do
+    if [ -n "${_dir}" ]; then # don't display warning if _dir is empty string
       printf "\n${_bold}${_dir}${_normal} is not a valid notes directory\n"
     fi
-    printf "Enter the FULL PATH to your notes directory:\n"
-    read _dir
+    printf "Enter the ABSOLUTE PATH to your notes directory:\n"
+    read -e _dir
   done
 
   printf "_ext=${_ext}\n_dir=${_dir}" > "${rootdir}/_config/env.sh"
@@ -101,7 +101,7 @@ ${_bold}SYNOPSIS${_normal}
 
 ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-h${_normal} ]                                  get help (display this page)
-    [ ${_bold}-d${_normal} ]                                  open prompt to reset notes directory
+    [ ${_bold}-d${_normal} DIR ]                              set notes directory (absolute paths to existing directory)
     [ ${_bold}-f${_normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
     [ ${_bold}-F${_normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
     [ ${_bold}-m${_normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note
@@ -109,7 +109,7 @@ ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-N${_normal} NEW_DIR ]                          create a directory
     [ ${_bold}-O${_normal} ]                                  open notes directory
     [ ${_bold}-p${_normal} NOTE ]                             print contents of note
-    [ ${_bold}-P${_normal} NOTE_OR_DIR ]                      print full path to note or directory
+    [ ${_bold}-P${_normal} NOTE_OR_DIR ]                      print absolute path to note or directory
     [ ${_bold}-r${_normal} NOTE ]                             remove (delete) a note
     [ ${_bold}-R${_normal} DIR ]                              remove (delete) a directory
 

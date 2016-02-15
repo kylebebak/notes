@@ -20,7 +20,7 @@ while [ -h "$SOURCE" ]; do
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
   SOURCE="$(readlink "$SOURCE")"
   [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-  # if $SOURCE was a relative symlink, resolve it relative to path where symlink was located
+  # if $SOURCE was a relative symlink, resolve it relative to path of symlink
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 rootdir=$(dirname "${DIR}") # up from bin to root directory
@@ -36,7 +36,7 @@ cd ${_dir} 2>/dev/null; dir=`pwd -P`; cd ${dir}
 
 # main program logic
 # --------------------------------------------------
-optstring=":Cdf:F:him:n:N:Op:Pr:R:"
+optstring=":Cd:f:F:him:n:N:Op:Pr:R:"
 # completions options that need to be parsed before potentially exiting program
 # --------------------------------------------------
 while getopts "$optstring" opt; do
@@ -58,11 +58,15 @@ while getopts "$optstring" opt; do
       exit 0
     ;;
 
-    # prompt user to set a new notes directory
+    # allow user to set a new notes directory
     # ------------------------------
     d)
-      setdir ""
-      exit 0
+      if [[ -d "${OPTARG}" ]] && [[ "${OPTARG}" = /* ]]; then
+        printf "_ext=${_ext}\n_dir=${OPTARG}" > "${rootdir}/_config/env.sh"
+        exit 0
+      fi
+      printf "\n${_bold}${OPTARG}${_normal} is not a valid notes directory, make sure you are using an absolute path\n"
+      exit 1
     ;;
 
   esac
@@ -70,7 +74,7 @@ done
 
 
 # prompt user to enter valid notes directory, and update _config/env.sh
-if [ ! -d "${_dir}" ]; then
+if [[ ! -d "${_dir}" ]] || [[ ! "${_dir}" = /* ]]; then
   setdir "${_dir}"
 fi
 

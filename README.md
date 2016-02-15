@@ -27,7 +27,7 @@ To make **notes** truly sweet, insert the following into your shell startup file
 `which notes >/dev/null && . "$( notes -i )"`
 
 #### Notes directory
-The first time you run **notes**, you will be prompted to choose your notes directory. If you ever want to change this directory, run `notes -d`.
+The first time you run **notes**, you will be prompted to choose your notes directory. You need to use the **absolute path** to an existing directory. If you ever want to change it, run `notes -d <directory>`.
 
 #### Other systems
 
@@ -61,8 +61,8 @@ g.t. two arguments      <program> <notes>:          pass notes as arguments to p
 [ -m NOTE NEW_NOTE ]                                move a note (change its name)
 [ -f PATTERN ]                                      find notes: search for all notes matching pattern
 [ -p NOTE ]                                         print contents of note
-[ -P NOTE_OR_DIR ]                                  print full path to note or directory
-[ -d ]                                              open prompt to reset notes directory                                  
+[ -P NOTE_OR_DIR ]                                  print absolute path to note or directory
+[ -d DIR ]                                          set notes directory (absolute path to existing directory)
 ```
 
 Execute `notes -h` to get help and see more options.

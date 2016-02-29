@@ -13,6 +13,8 @@ The default extension for notes is `md`. The extension is not part of notes' syn
 * Pass a note to any program, match notes using globbing patterns
 * Use any directory structure to organize notes
 
+![notes-tab-completion](https://raw.githubusercontent.com/kylebebak/notes/master/_assets/notes_tab_completion.gif)
+
 
 ## Installation
 

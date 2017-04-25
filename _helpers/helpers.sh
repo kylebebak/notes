@@ -9,7 +9,7 @@ function setdir {
     read -e _dir
   done
 
-  printf "_ext=${_ext}\n_dir=${_dir}" > "${rootdir}/_config/env.sh"
+  printf "_ext=${_ext}\n_dir=\"${_dir}\"" > "${rootdir}/_config/env.sh"
   exit 0
 }
 

@@ -30,7 +30,7 @@ source "${rootdir}/_config/env.sh"
 # import helpers
 source "${rootdir}/_helpers/helpers.sh"
 # attempt to cd into notes directory
-cd ${_dir} 2>/dev/null; dir=`pwd -P`; cd ${dir}
+cd "${_dir}" 2>/dev/null; dir=`pwd -P`; cd "${dir}"
 
 
 

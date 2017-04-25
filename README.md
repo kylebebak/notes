@@ -33,7 +33,7 @@ The first time you run **notes**, you will be prompted to choose your notes dire
 
 #### Other systems
 
-Clone this repo, or download and unzip the [tarball](https://github.com/kylebebak/notes/archive/1.0.0.tar.gz). Either add the `bin` directory to your `$PATH`, or create a symlink in your `$PATH` that points to the **notes** executable in the `bin` directory.
+Clone this repo, or download and unzip the [tarball](https://github.com/kylebebak/notes/archive/1.0.1.tar.gz). Either add the `bin` directory to your `$PATH`, or create a symlink in your `$PATH` that points to the **notes** executable in the `bin` directory.
 
 If you execute **notes** via symlink, *make sure that the name of the target file (the symlink) is also notes*. Otherwise, tab completions won't work.
 

@@ -20,7 +20,7 @@ The default extension for notes is `md`. The extension is not part of notes' syn
 
 #### OSX
 ```sh
-brew tap kylebebak/notes
+brew tap kylebebak/tap
 brew install notes
 ```
 

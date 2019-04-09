@@ -22,7 +22,19 @@ The default extension for notes is `.md`. The extension is not part of notes' sy
 ```sh
 brew tap kylebebak/tap
 brew install notes
+
+# upgrade
+brew upgrade notes
 ```
+
+You unfortunately will be asked to reset your notes config when you upgrade notes. This behavior could be improved by putting notes config in a dotfile in your home directory, instead of in `_config/env.sh`. PRs welcome!
+
+
+#### Other systems
+Clone this repo, or download and unzip the [tarball](https://github.com/kylebebak/notes/archive/1.1.0.tar.gz). Either add the `bin` directory to your `$PATH`, or create a symlink in your `$PATH` that points to the **notes** executable in the `bin` directory.
+
+If you execute **notes** via symlink, *make sure that the name of the target file (the symlink) is also notes*. Otherwise, tab completions won't work.
+
 
 #### Tab completion (bash and zsh)
 To make **notes** truly sweet, insert the following into your shell startup file (e.g. `.bash_profile`):  
@@ -31,12 +43,6 @@ To make **notes** truly sweet, insert the following into your shell startup file
 
 #### Notes directory
 The first time you run **notes**, you will be prompted to choose your notes directory. You need to use the **absolute path** to an existing directory. If you ever want to change it, run `notes -d <directory>`.
-
-
-#### Other systems
-Clone this repo, or download and unzip the [tarball](https://github.com/kylebebak/notes/archive/1.1.0.tar.gz). Either add the `bin` directory to your `$PATH`, or create a symlink in your `$PATH` that points to the **notes** executable in the `bin` directory.
-
-If you execute **notes** via symlink, *make sure that the name of the target file (the symlink) is also notes*. Otherwise, tab completions won't work.
 
 
 ## Extra

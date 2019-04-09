@@ -107,7 +107,9 @@ ${_bold}SYNOPSIS${_normal}
 
 ${_bold}DESCRIPTION${_normal}
     [ ${_bold}-h${_normal} ]                                  get help (display this page)
-    [ ${_bold}-d${_normal} DIR ]                              set notes directory (absolute paths to existing directory)
+    [ ${_bold}-v${_normal} ]                                  print version
+    [ ${_bold}-c${_normal} ]                                  print notes config, and path to config file
+    [ ${_bold}-d${_normal} DIR ]                              set notes directory (absolute path to existing directory)
     [ ${_bold}-f${_normal} PATTERN ]                          find notes: search for notes matching pattern (all matches)
     [ ${_bold}-F${_normal} PATTERN ]                          find notes: search for notes matching pattern (note names only)
     [ ${_bold}-m${_normal} NOTE NEW_NOTE ]                    move a note (change its name). can not be used to overwrite an existing note

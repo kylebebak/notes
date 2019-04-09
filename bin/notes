@@ -33,7 +33,7 @@ cd "${_dir}" 2>/dev/null; dir=`pwd -P`; cd "${dir}"
 
 # main program logic
 # --------------------------------------------------
-optstring=":Cd:f:F:him:n:N:Op:Pr:R:"
+optstring=":Ccd:f:F:hvim:n:N:Op:Pr:R:"
 # completions options that need to be parsed before potentially exiting program
 # --------------------------------------------------
 while getopts "$optstring" opt; do
@@ -85,6 +85,23 @@ while getopts "$optstring" opt; do
     # ------------------------------
     h)
       usage
+      exit 0
+    ;;
+
+    # print version and exit
+    # ------------------------------
+    v)
+      echo "notes version 1.1.0"
+      exit 0
+    ;;
+
+    # print notes config and exit
+    # ------------------------------
+    c)
+      printf "notes config file: ${rootdir}/_config/env.sh\n\n"
+
+      cat ${rootdir}/_config/env.sh
+      echo
       exit 0
     ;;
 

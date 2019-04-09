@@ -85,8 +85,6 @@ function previewnotes {
 
 }
 
-
-
 # help
 # --------------------------------------------------
 unset usage

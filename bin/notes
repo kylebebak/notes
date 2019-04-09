@@ -8,8 +8,6 @@ _normal=`tput sgr0`
 _glob="@"
 name=notes
 
-
-
 # directories and imports
 # --------------------------------------------------
 
@@ -31,7 +29,6 @@ source "${rootdir}/_config/env.sh"
 source "${rootdir}/_helpers/helpers.sh"
 # attempt to cd into notes directory
 cd "${_dir}" 2>/dev/null; dir=`pwd -P`; cd "${dir}"
-
 
 
 # main program logic
@@ -72,12 +69,10 @@ while getopts "$optstring" opt; do
   esac
 done
 
-
 # prompt user to enter valid notes directory, and update _config/env.sh
 if [[ ! -d "${_dir}" ]] || [[ ! "${_dir}" = /* ]]; then
   setdir "${_dir}"
 fi
-
 
 # reset options index
 OPTIND=1
@@ -192,15 +187,12 @@ while getopts "$optstring" opt; do
   esac
 done
 
-
-
 # list all notes (if no args are passed)
 # ------------------------------
 if [ -z "$1" ]; then
   previewnotes .
   exit 0
 fi
-
 
 # open note, or list all notes within subdirectory (if one arg is passed)
 # ------------------------------
@@ -218,7 +210,6 @@ if [ -z "$2" ]; then
   open $1${_ext}
   exit 0
 fi
-
 
 # pass note or directory as argument to another program (if two args are passed)
 # ------------------------------
@@ -251,7 +242,6 @@ if [ -z "$3" ]; then
   # exit with status code from last command
   exit $?
 fi
-
 
 # pass notes as arguments to another program (if more than two args are passed)
 # ------------------------------

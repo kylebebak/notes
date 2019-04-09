@@ -85,6 +85,14 @@ function previewnotes {
 
 }
 
+function opennote {
+  if [ -z "$EDITOR" ]; then
+    open $1
+  else
+    eval "$EDITOR $1"
+  fi
+}
+
 # help
 # --------------------------------------------------
 unset usage

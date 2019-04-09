@@ -120,7 +120,7 @@ while getopts "$optstring" opt; do
     n)
       checkname "$OPTARG"
       mkdir -p $(dirname "$OPTARG${_ext}") && touch "$OPTARG${_ext}"
-      open "$OPTARG${_ext}"
+      opennote "$OPTARG${_ext}"
       exit 0
     ;;
 
@@ -207,7 +207,7 @@ if [ -z "$2" ]; then
     exit 0
   fi
 
-  open $1${_ext}
+  opennote $1${_ext}
   exit 0
 fi
 

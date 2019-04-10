@@ -24,9 +24,15 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 rootdir=$(dirname "${DIR}") # up from bin to root directory
 
 # import user-defined variables
-source "${rootdir}/_config/env.sh"
+configfile="$HOME/.notesrc"
+if [ ! -f "$configfile" ]; then
+  printf '_ext=.md\n_dir=""\n' > $configfile
+  echo "notes config file $configfile created"
+fi
+
+source "$configfile"
 # import helpers
-source "${rootdir}/_helpers/helpers.sh"
+source "${rootdir}/helpers/helpers.sh"
 # attempt to cd into notes directory
 cd "${_dir}" 2>/dev/null; dir=`pwd -P`; cd "${dir}"
 
@@ -42,7 +48,7 @@ while getopts "$optstring" opt; do
     # path to init script for loading custom tab completions
     # ------------------------------
     i)
-      echo "${rootdir}/_completions/init.sh"
+      echo "${rootdir}/completions/init.sh"
       exit 0
     ;;
 
@@ -59,7 +65,7 @@ while getopts "$optstring" opt; do
     # ------------------------------
     d)
       if [[ -d "${OPTARG}" ]] && [[ "${OPTARG}" = /* ]]; then
-        printf "_ext=${_ext}\n_dir=${OPTARG}" > "${rootdir}/_config/env.sh"
+        printf "_ext=${_ext}\n_dir=${OPTARG}\n" > "$configfile"
         exit 0
       fi
       printf "\n${_bold}${OPTARG}${_normal} is not a valid notes directory, make sure you are using an absolute path\n"
@@ -71,7 +77,7 @@ done
 
 notes_version="1.1.0"
 
-# prompt user to enter valid notes directory, and update _config/env.sh
+# prompt user to enter valid notes directory, and update .notesrc
 if [[ ! -d "${_dir}" ]] || [[ ! "${_dir}" = /* ]]; then
   setdir "${_dir}"
 fi
@@ -102,9 +108,9 @@ while getopts "$optstring" opt; do
     # print notes config and exit
     # ------------------------------
     c)
-      printf "notes config file: ${rootdir}/_config/env.sh\n\n"
+      printf "notes config file: $configfile\n\n"
 
-      cat ${rootdir}/_config/env.sh
+      cat $configfile
       echo
       exit 0
     ;;

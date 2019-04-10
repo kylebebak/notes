@@ -12,7 +12,7 @@ The default extension for notes is `.md`. The extension is not part of notes' sy
 * Pass a note to any program, match notes using globbing patterns
 * Use any directory structure to organize notes
 
-![notes-tab-completion](https://raw.githubusercontent.com/kylebebak/notes/master/_assets/notes_tab_completion.gif)
+![notes-tab-completion](https://raw.githubusercontent.com/kylebebak/notes/master/assets/notes_tab_completion.gif)
 
 
 ## Installation
@@ -26,8 +26,6 @@ brew install notes
 # upgrade
 brew upgrade notes
 ```
-
-You unfortunately will be asked to reset your notes config when you upgrade notes. This behavior could be improved by putting notes config in a dotfile in your home directory, instead of in `_config/env.sh`. PRs welcome!
 
 
 #### Other systems
@@ -46,7 +44,7 @@ The first time you run **notes**, you will be prompted to choose your notes dire
 
 
 ## Extra
-The default extension for notes is `.md`, because markdown is great. If you want to change it, edit the `_ext` variable in `_config/env.sh`.
+The default extension for notes is `.md`, because markdown is great. If you want to change it, edit the `_ext` variable in `$HOME/.notesrc`.
 
 If you want to print your current config, and the absolute path to the config file, execute `notes -c`.
 

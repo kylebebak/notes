@@ -9,7 +9,7 @@ function setdir {
     read -e _dir
   done
 
-  printf "_ext=${_ext}\n_dir=\"${_dir}\"" > "${rootdir}/_config/env.sh"
+  printf "_ext=${_ext}\n_dir=\"${_dir}\"\n" > "$HOME/.notesrc"
   exit 0
 }
 
@@ -152,6 +152,6 @@ ${_bold}DESCRIPTION${_normal}
       - g.t. two arguments    <program> <notes>:            pass notes as arguments to program
 
 ${_bold}EXTENSIONS${_normal}
-      Notes have a default extension of ${_bold}md${_normal}, which is assigned to the variable ${_bold}_ext${_normal} in ${_bold}_config/env.sh${_normal}. Edit this variable to change the extension.
+      Notes have a default extension of ${_bold}md${_normal}, which is assigned to the variable ${_bold}_ext${_normal} in ${_bold}$HOME/.notesrc${_normal}. Edit this variable to change the extension.
 EOF
 }

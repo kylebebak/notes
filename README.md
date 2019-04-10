@@ -43,10 +43,12 @@ To make **notes** truly sweet, insert the following into your shell startup file
 The first time you run **notes**, you will be prompted to choose your notes directory. You need to use the **absolute path** to an existing directory. If you ever want to change it, run `notes -d <directory>`.
 
 
-## Extra
+## Config (~/.notesrc)
 The default extension for notes is `.md`, because markdown is great. If you want to change it, edit the `_ext` variable in `$HOME/.notesrc`.
 
-If you want to print your current config, and the absolute path to the config file, execute `notes -c`.
+If you want to change your notes directory, you can edit the `_dir` variable in the file, or you can run `notes -d`.
+
+If you want to print your current config execute `notes -c`.
 
 
 ## Usage

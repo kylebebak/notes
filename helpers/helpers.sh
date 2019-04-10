@@ -109,7 +109,7 @@ function check_release {
   if [ $latest_release != $1 ]; then
     echo
     echo "latest release is ${latest_release}, and you have $1"
-    echo "to upgrade, run \`brew upgrade notes\` if you're on OSX, else see here: https://github.com/kylebebak/notes"
+    echo "to upgrade on OSX, run \`brew upgrade notes\`, else see here: https://github.com/kylebebak/notes"
   fi
 }
 

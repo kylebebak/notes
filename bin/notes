@@ -101,7 +101,11 @@ while getopts "$optstring" opt; do
     # ------------------------------
     v)
       echo "notes version ${notes_version}"
-      check_release $notes_version
+      latest_release=`get_latest_release kylebebak/notes`
+      echo "latest release ${latest_release}"
+      if [ $latest_release != $notes_version ]; then
+        echo "to upgrade on OSX, run \`brew upgrade notes\`, else see here: https://github.com/kylebebak/notes"
+      fi
       exit 0
     ;;
 

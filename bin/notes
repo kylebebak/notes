@@ -69,6 +69,8 @@ while getopts "$optstring" opt; do
   esac
 done
 
+notes_version="1.1.0"
+
 # prompt user to enter valid notes directory, and update _config/env.sh
 if [[ ! -d "${_dir}" ]] || [[ ! "${_dir}" = /* ]]; then
   setdir "${_dir}"
@@ -85,13 +87,15 @@ while getopts "$optstring" opt; do
     # ------------------------------
     h)
       usage
+      check_release $notes_version
       exit 0
     ;;
 
     # print version and exit
     # ------------------------------
     v)
-      echo "notes version 1.1.0"
+      echo "notes version ${notes_version}"
+      check_release $notes_version
       exit 0
     ;;
 
@@ -208,6 +212,7 @@ done
 # ------------------------------
 if [ -z "$1" ]; then
   previewnotes .
+  check_release $notes_version
   exit 0
 fi
 

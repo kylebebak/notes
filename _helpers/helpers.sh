@@ -93,6 +93,26 @@ function opennote {
   fi
 }
 
+function get_latest_release {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" |
+    grep '"tag_name":' |
+    sed -E 's/.*"([^"]+)".*/\1/' |
+    sed -E 's/[[:space:]]//g'
+}
+
+function check_release {
+  latest_release=`get_latest_release kylebebak/notes`
+  if [ -z "$latest_release" ]; then
+    return
+  fi
+
+  if [ $latest_release != $1 ]; then
+    echo
+    echo "latest release is ${latest_release}, and you have $1"
+    echo "to upgrade, run \`brew upgrade notes\` if you're on OSX, else see here: https://github.com/kylebebak/notes"
+  fi
+}
+
 # help
 # --------------------------------------------------
 unset usage
